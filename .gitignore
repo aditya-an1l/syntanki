@@ -1,0 +1,10 @@
+docs/
+AGENT.md
+CONTEXT.json
+TODO.md
+update.md
+log.md
+.ignore
+.opencode/
+.next/
+node_modules/
