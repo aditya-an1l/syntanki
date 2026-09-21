@@ -1,14 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDecks, createDeck, deleteDeck } from "@/db/helpers";
+import { useRouter } from "next/navigation";
+import { getDecks, deleteDeck } from "@/db/helpers";
 import { db } from "@/db/schema";
 import type { Deck } from "@/db/schema";
+import Hero from "@/components/Hero";
+import DeckCard from "@/components/DeckCard";
+import Drawer from "@/components/Drawer";
+import DeckManager from "@/components/DeckManager";
 
 export default function Home() {
+  const router = useRouter();
   const [decks, setDecks] = useState<Deck[]>([]);
-  const [newName, setNewName] = useState("");
   const [counts, setCounts] = useState<Record<number, { total: number; due: number }>>({});
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const load = async () => {
     const d = await getDecks();
@@ -29,108 +35,92 @@ export default function Home() {
     load();
   }, []);
 
-  const handleCreate = async () => {
-    if (!newName.trim()) return;
-    await createDeck(newName.trim());
-    setNewName("");
-    load();
-  };
-
   const handleDelete = async (id: number) => {
+    if (!confirm("Delete this deck and all its cards?")) return;
     await deleteDeck(id);
     load();
   };
 
-  return (
-    <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
-      <h1>Syntanki</h1>
-      <p style={{ color: "#888" }}>
-        Anki-for-code. Paste code, get atomic cloze cards, review with FSRS.
-      </p>
+  const handleReview = (id: number) => {
+    router.push(`/review?deck=${id}`);
+  };
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        <input
-          type="text"
-          placeholder="New deck name..."
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          style={{ padding: 8, borderRadius: 4, border: "1px solid #333", flex: 1 }}
-        />
-        <button
-          onClick={handleCreate}
-          style={{
-            padding: "8px 16px",
-            background: "#2563eb",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-          }}
-        >
-          Create
-        </button>
-      </div>
+  return (
+    <main style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
+      <Hero>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            style={{
+              padding: "8px 16px",
+              background: "var(--primary)",
+              color: "var(--ink)",
+              border: "none",
+              borderRadius: 6,
+              cursor: "pointer",
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
+            Add/Remove Deck
+          </button>
+          <a
+            href="/stats"
+            style={{
+              padding: "8px 16px",
+              background: "var(--surface-soft)",
+              color: "var(--ink)",
+              border: "1px solid var(--hairline)",
+              borderRadius: 6,
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
+            Stats
+          </a>
+          <a
+            href="/settings"
+            style={{
+              padding: "8px 16px",
+              background: "var(--surface-soft)",
+              color: "var(--ink)",
+              border: "1px solid var(--hairline)",
+              borderRadius: 6,
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
+            Settings
+          </a>
+        </div>
+      </Hero>
 
       {decks.length === 0 ? (
-        <p>No decks yet. Create one above.</p>
+        <p style={{ color: "var(--mute)", textAlign: "center", padding: 48 }}>
+          No decks yet. Click Add/Remove Deck to create one.
+        </p>
       ) : (
         <div>
           {decks.map((d) => (
-            <div
+            <DeckCard
               key={d.id}
-              style={{
-                border: "1px solid #333",
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 8,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <strong>{d.name}</strong>
-                <span style={{ color: "#888", marginLeft: 12 }}>
-                  {counts[d.id!]?.total ?? 0} cards,
-                  {" "}
-                  {counts[d.id!]?.due ?? 0} due
-                </span>
-              </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                <a
-                  href={`/import?deck=${d.id}`}
-                  style={{ color: "#2563eb", textDecoration: "none" }}
-                >
-                  Import
-                </a>
-                <a
-                  href={`/review?deck=${d.id}`}
-                  style={{ color: "#16a34a", textDecoration: "none" }}
-                >
-                  Review
-                </a>
-                <button
-                  onClick={() => handleDelete(d.id!)}
-                  style={{
-                    color: "#dc2626",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+              id={d.id!}
+              name={d.name}
+              total={counts[d.id!]?.total ?? 0}
+              due={counts[d.id!]?.due ?? 0}
+              tags={d.tags}
+              onReview={handleReview}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}
 
-      <nav style={{ marginTop: 24 }}>
-        <a href="/stats" style={{ marginRight: 16, color: "#888" }}>Stats</a>
-        <a href="/settings" style={{ color: "#888" }}>Settings</a>
-      </nav>
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Manage Decks">
+        <DeckManager decks={decks} onRefresh={load} />
+      </Drawer>
     </main>
   );
 }

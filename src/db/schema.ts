@@ -4,6 +4,7 @@ import type { FSRSState } from "../scheduler/fsrs";
 export interface Deck {
   id?: number;
   name: string;
+  tags: string[];
   retention: number; // FSRS requested retention, e.g. 0.9
   createdAt: number;
 }
