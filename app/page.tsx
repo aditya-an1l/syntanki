@@ -62,7 +62,7 @@ export default function Home() {
               fontSize: 14,
             }}
           >
-            Add/Remove Deck
+            Create/Import
           </button>
           <a
             href="/stats"
@@ -99,7 +99,7 @@ export default function Home() {
 
       {decks.length === 0 ? (
         <p style={{ color: "var(--mute)", textAlign: "center", padding: 48 }}>
-          No decks yet. Click Add/Remove Deck to create one.
+          No decks yet. Click Create/Import to create one.
         </p>
       ) : (
         <div>
@@ -118,7 +118,7 @@ export default function Home() {
         </div>
       )}
 
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Manage Decks">
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Create/Import">
         <DeckManager decks={decks} onRefresh={load} />
       </Drawer>
     </main>
