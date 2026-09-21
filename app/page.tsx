@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getDecks, createDeck, deleteDeck } from "@/db/helpers";
+import { getDecks, deleteDeck } from "@/db/helpers";
 import { db } from "@/db/schema";
 import type { Deck } from "@/db/schema";
 import Hero from "@/components/Hero";
 import DeckCard from "@/components/DeckCard";
+import Drawer from "@/components/Drawer";
+import DeckManager from "@/components/DeckManager";
 
 export default function Home() {
   const router = useRouter();
   const [decks, setDecks] = useState<Deck[]>([]);
-  const [newName, setNewName] = useState("");
   const [counts, setCounts] = useState<Record<number, { total: number; due: number }>>({});
-  const [showCreate, setShowCreate] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const load = async () => {
     const d = await getDecks();
@@ -34,14 +35,6 @@ export default function Home() {
     load();
   }, []);
 
-  const handleCreate = async () => {
-    if (!newName.trim()) return;
-    await createDeck(newName.trim());
-    setNewName("");
-    setShowCreate(false);
-    load();
-  };
-
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this deck and all its cards?")) return;
     await deleteDeck(id);
@@ -57,7 +50,7 @@ export default function Home() {
       <Hero>
         <div style={{ display: "flex", gap: 12 }}>
           <button
-            onClick={() => setShowCreate(!showCreate)}
+            onClick={() => setDrawerOpen(true)}
             style={{
               padding: "8px 16px",
               background: "var(--primary)",
@@ -69,7 +62,7 @@ export default function Home() {
               fontSize: 14,
             }}
           >
-            Add Deck
+            Add/Remove Deck
           </button>
           <a
             href="/stats"
@@ -104,66 +97,9 @@ export default function Home() {
         </div>
       </Hero>
 
-      {showCreate && (
-        <div
-          style={{
-            background: "var(--surface-card)",
-            border: "1px solid var(--hairline)",
-            borderRadius: 6,
-            padding: 16,
-            marginBottom: 24,
-            display: "flex",
-            gap: 8,
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Deck name..."
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-            style={{
-              flex: 1,
-              padding: 8,
-              borderRadius: 6,
-              border: "1px solid var(--hairline)",
-              background: "var(--surface-card)",
-              color: "var(--ink)",
-            }}
-          />
-          <button
-            onClick={handleCreate}
-            style={{
-              padding: "8px 16px",
-              background: "var(--primary)",
-              color: "var(--ink)",
-              border: "none",
-              borderRadius: 6,
-              cursor: "pointer",
-              fontWeight: 500,
-            }}
-          >
-            Create
-          </button>
-          <button
-            onClick={() => setShowCreate(false)}
-            style={{
-              padding: "8px 16px",
-              background: "var(--surface-soft)",
-              color: "var(--body)",
-              border: "1px solid var(--hairline)",
-              borderRadius: 6,
-              cursor: "pointer",
-            }}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
-
       {decks.length === 0 ? (
         <p style={{ color: "var(--mute)", textAlign: "center", padding: 48 }}>
-          No decks yet. Create one to get started.
+          No decks yet. Click Add/Remove Deck to create one.
         </p>
       ) : (
         <div>
@@ -174,12 +110,17 @@ export default function Home() {
               name={d.name}
               total={counts[d.id!]?.total ?? 0}
               due={counts[d.id!]?.due ?? 0}
+              tags={d.tags}
               onReview={handleReview}
               onDelete={handleDelete}
             />
           ))}
         </div>
       )}
+
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Manage Decks">
+        <DeckManager decks={decks} onRefresh={load} />
+      </Drawer>
     </main>
   );
 }
