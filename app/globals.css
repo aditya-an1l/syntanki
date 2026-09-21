@@ -1,26 +1,111 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap');
+
+/* ── Reset ──────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; font-family: 'IBM Plex Sans', -apple-system, system-ui, sans-serif; }
+
+body { background: var(--canvas); color: var(--body); min-height: 100dvh; line-height: 1.5; }
+
+a { color: var(--link-blue); }
+
+button, input, select, textarea { font: inherit; }
+
+/* ── Light Theme (default) ──────────────────────────────────────────── */
+
+:root {
+  --canvas: #eeefe9;
+  --surface-soft: #e5e7e0;
+  --surface-card: #ffffff;
+  --ink: #23251d;
+  --body: #4d4f46;
+  --mute: #6c6e63;
+  --ash: #9b9c92;
+  --stone: #b6b7af;
+  --primary: #f7a501;
+  --primary-pressed: #dd9001;
+  --hairline: #bfc1b7;
+  --hairline-soft: #dcdfd2;
+  --link-blue: #1d4ed8;
+  --focus-ring: rgba(59,130,246,0.5);
+
+  /* Typography */
+  --font-sans: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  --font-mono: 'Source Code Pro', ui-monospace, monospace;
+
+  /* Spacing */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-section: 80px;
+
+  /* Border Radius */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  color-scheme: light dark;
 }
 
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
+/* ── Dark Theme ─────────────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  --canvas: #1a1b1e;
+  --surface-soft: #2d2f33;
+  --surface-card: #25272b;
+  --ink: #e8e9e7;
+  --body: #b0b2ae;
+  --mute: #7c7e76;
+  --ash: #5a5c55;
+  --stone: #4a4c45;
+  --primary: #f7a501;
+  --primary-pressed: #dd9001;
+  --hairline: #3d3f43;
+  --hairline-soft: #2d2f33;
+  --link-blue: #60a5fa;
+  --focus-ring: rgba(96,165,250,0.5);
 }
 
-a {
-  color: inherit;
+/* ── OS Preference (system) ─────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #1a1b1e;
+    --surface-soft: #2d2f33;
+    --surface-card: #25272b;
+    --ink: #e8e9e7;
+    --body: #b0b2ae;
+    --mute: #7c7e76;
+    --ash: #5a5c55;
+    --stone: #4a4c45;
+    --hairline: #3d3f43;
+    --hairline-soft: #2d2f33;
+    --link-blue: #60a5fa;
+    --focus-ring: rgba(96,165,250,0.5);
+  }
 }
 
-pre {
-  margin: 0;
-  padding: 12px;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-size: 14px;
+/* ── Focus Ring ─────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
-code {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-}
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--surface-soft); }
+::-webkit-scrollbar-thumb { background: var(--ash); border-radius: 4px; }
+
+/* ── Selection ──────────────────────────────────────────────────────── */
+
+::selection { background: var(--primary); color: var(--ink); }

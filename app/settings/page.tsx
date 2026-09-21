@@ -7,6 +7,7 @@ export default function SettingsPage() {
   const [geminiKey, setGeminiKey] = useState("");
   const [openaiKey, setOpenaiKey] = useState("");
   const [saved, setSaved] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
 
   useEffect(() => {
     const ai = localStorage.getItem("syntanki:ai_enabled");
@@ -15,7 +16,24 @@ export default function SettingsPage() {
     if (gk) setGeminiKey(gk);
     const ok = localStorage.getItem("syntanki:openai_key");
     if (ok) setOpenaiKey(ok);
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) setTheme(savedTheme);
   }, []);
+
+  const applyTheme = (t: "light" | "dark" | "system") => {
+    setTheme(t);
+    if (t === "system") {
+      localStorage.removeItem("theme");
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    } else {
+      localStorage.setItem("theme", t);
+      document.documentElement.setAttribute("data-theme", t);
+    }
+  };
 
   const save = () => {
     localStorage.setItem("syntanki:ai_enabled", String(aiEnabled));
@@ -27,15 +45,41 @@ export default function SettingsPage() {
 
   return (
     <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
-      <h1>Settings</h1>
+      <h1 style={{ color: "var(--ink)", marginBottom: 24 }}>Settings</h1>
 
       <section style={{ marginBottom: 24 }}>
-        <h2>AI Instructor</h2>
-        <p style={{ color: "#888", marginBottom: 12 }}>
+        <h2 style={{ color: "var(--ink)", marginBottom: 8 }}>Appearance</h2>
+        <p style={{ color: "var(--mute)", marginBottom: 12 }}>
+          Choose how Syntanki looks. System follows your OS preference.
+        </p>
+        <div style={{ display: "flex", gap: 8 }}>
+          {(["light", "dark", "system"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => applyTheme(t)}
+              style={{
+                padding: "8px 16px",
+                background: theme === t ? "var(--primary)" : "var(--surface-soft)",
+                color: theme === t ? "var(--ink)" : "var(--body)",
+                border: "1px solid var(--hairline)",
+                borderRadius: 6,
+                cursor: "pointer",
+                textTransform: "capitalize",
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ marginBottom: 24 }}>
+        <h2 style={{ color: "var(--ink)", marginBottom: 8 }}>AI Instructor</h2>
+        <p style={{ color: "var(--mute)", marginBottom: 12 }}>
           Off by default. When enabled, AI can rephrase questions and generate
           mnemonics. Your keys stay in localStorage only.
         </p>
-        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", color: "var(--body)" }}>
           <input
             type="checkbox"
             checked={aiEnabled}
@@ -47,10 +91,10 @@ export default function SettingsPage() {
 
       {aiEnabled && (
         <section style={{ marginBottom: 24 }}>
-          <h2>API Keys (BYOK)</h2>
+          <h2 style={{ color: "var(--ink)", marginBottom: 8 }}>API Keys (BYOK)</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
-              <label style={{ display: "block", marginBottom: 4, color: "#888" }}>
+              <label style={{ display: "block", marginBottom: 4, color: "var(--mute)" }}>
                 Gemini API Key (free tier)
               </label>
               <input
@@ -58,11 +102,18 @@ export default function SettingsPage() {
                 value={geminiKey}
                 onChange={(e) => setGeminiKey(e.target.value)}
                 placeholder="AIza..."
-                style={{ padding: 8, borderRadius: 4, border: "1px solid #333", width: "100%" }}
+                style={{
+                  padding: 8,
+                  borderRadius: 6,
+                  border: "1px solid var(--hairline)",
+                  width: "100%",
+                  background: "var(--surface-card)",
+                  color: "var(--ink)",
+                }}
               />
             </div>
             <div>
-              <label style={{ display: "block", marginBottom: 4, color: "#888" }}>
+              <label style={{ display: "block", marginBottom: 4, color: "var(--mute)" }}>
                 OpenAI API Key (optional)
               </label>
               <input
@@ -70,7 +121,14 @@ export default function SettingsPage() {
                 value={openaiKey}
                 onChange={(e) => setOpenaiKey(e.target.value)}
                 placeholder="sk-..."
-                style={{ padding: 8, borderRadius: 4, border: "1px solid #333", width: "100%" }}
+                style={{
+                  padding: 8,
+                  borderRadius: 6,
+                  border: "1px solid var(--hairline)",
+                  width: "100%",
+                  background: "var(--surface-card)",
+                  color: "var(--ink)",
+                }}
               />
             </div>
           </div>
@@ -81,16 +139,17 @@ export default function SettingsPage() {
         onClick={save}
         style={{
           padding: "8px 24px",
-          background: "#2563eb",
-          color: "#fff",
+          background: "var(--primary)",
+          color: "var(--ink)",
           border: "none",
-          borderRadius: 4,
+          borderRadius: 6,
           cursor: "pointer",
+          fontWeight: 500,
         }}
       >
         Save
       </button>
-      {saved && <span style={{ marginLeft: 12, color: "#16a34a" }}>Saved.</span>}
+      {saved && <span style={{ marginLeft: 12, color: "var(--mute)" }}>Saved.</span>}
 
       <p style={{ marginTop: 24 }}>
         <a href="/">Back to decks</a>
