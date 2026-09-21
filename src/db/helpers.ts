@@ -1,9 +1,10 @@
 import { db, type Deck, type Card } from "./schema";
 import { emptyFSRSState } from "../scheduler/fsrs";
 
-export async function createDeck(name: string): Promise<number> {
+export async function createDeck(name: string, tags: string[] = []): Promise<number> {
   return db.decks.add({
     name,
+    tags,
     retention: 0.9,
     createdAt: Date.now(),
   });
