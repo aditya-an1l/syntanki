@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { codeToHtml } from "shiki";
-import { getDueCards, updateCardFsrs, recordReview } from "@/db/helpers";
+import { getDueCards, updateCardFsrs, recordReview, getDeck } from "@/db/helpers";
 import { nextFSRSState, formatDue, type Grade } from "@/scheduler/fsrs";
 import type { Card } from "@/db/schema";
 
@@ -11,6 +11,7 @@ function ReviewInner() {
   const searchParams = useSearchParams();
   const deckId = searchParams.get("deck") ? Number(searchParams.get("deck")) : null;
 
+  const [deckName, setDeckName] = useState("");
   const [queue, setQueue] = useState<Card[]>([]);
   const [current, setCurrent] = useState<Card | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -20,6 +21,8 @@ function ReviewInner() {
   const [reviewed, setReviewed] = useState(0);
 
   const loadDeck = useCallback(async (id: number) => {
+    const deck = await getDeck(id);
+    if (deck) setDeckName(deck.name);
     const due = await getDueCards(id);
     setQueue(due);
     setTotalDue(due.length);
@@ -69,8 +72,8 @@ function ReviewInner() {
   if (!deckId) {
     return (
       <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
-        <h1>Review</h1>
-        <p>No deck selected. <a href="/">Go to decks</a></p>
+        <h1 style={{ color: "var(--ink)" }}>Review</h1>
+        <p style={{ color: "var(--mute)" }}>No deck selected. <a href="/">Go to decks</a></p>
       </main>
     );
   }
@@ -78,11 +81,11 @@ function ReviewInner() {
   if (!current) {
     return (
       <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
-        <h1>Review</h1>
+        <h1 style={{ color: "var(--ink)" }}>Review - {deckName}</h1>
         {totalDue === 0 && reviewed === 0 ? (
-          <p>No cards due. Import some code first.</p>
+          <p style={{ color: "var(--mute)" }}>No cards due. Import some code first.</p>
         ) : (
-          <p>Session complete. Reviewed {reviewed} cards.</p>
+          <p style={{ color: "var(--mute)" }}>Session complete. Reviewed {reviewed} cards.</p>
         )}
         <p><a href="/">Back to decks</a></p>
       </main>
@@ -91,18 +94,18 @@ function ReviewInner() {
 
   return (
     <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
-      <h1>Review</h1>
-      <p style={{ color: "#888" }}>
+      <h1 style={{ color: "var(--ink)", marginBottom: 4 }}>Review - {deckName}</h1>
+      <p style={{ color: "var(--mute)", marginBottom: 24 }}>
         Due: {totalDue} | Reviewed: {reviewed}
       </p>
 
       <div
         style={{
-          border: "1px solid #333",
-          borderRadius: 8,
+          border: "1px solid var(--hairline)",
+          borderRadius: 6,
           padding: 24,
           marginBottom: 16,
-          background: "#1a1a2e",
+          background: "var(--surface-card)",
         }}
       >
         {!answered ? (
@@ -113,12 +116,13 @@ function ReviewInner() {
               style={{
                 marginTop: 16,
                 padding: "8px 24px",
-                background: "#2563eb",
-                color: "#fff",
+                background: "var(--primary)",
+                color: "var(--ink)",
                 border: "none",
-                borderRadius: 4,
+                borderRadius: 6,
                 cursor: "pointer",
                 fontSize: 16,
+                fontWeight: 500,
               }}
             >
               Show Answer
@@ -134,12 +138,13 @@ function ReviewInner() {
                   onClick={() => handleGrade(g)}
                   style={{
                     padding: "8px 16px",
-                    background: g === 1 ? "#dc2626" : g === 2 ? "#d97706" : g === 3 ? "#16a34a" : "#2563eb",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
+                    background: g === 1 ? "var(--primary-pressed)" : g === 2 ? "var(--surface-soft)" : "var(--surface-soft)",
+                    color: "var(--ink)",
+                    border: "1px solid var(--hairline)",
+                    borderRadius: 6,
                     cursor: "pointer",
                     fontSize: 14,
+                    fontWeight: 500,
                   }}
                 >
                   {g === 1 ? "Again" : g === 2 ? "Hard" : g === 3 ? "Good" : "Easy"}
