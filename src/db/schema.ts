@@ -7,6 +7,8 @@ export interface Deck {
   tags: string[];
   retention: number; // FSRS requested retention, e.g. 0.9
   createdAt: number;
+  protected?: boolean; // curated deck: cannot be deleted, only reset
+  seedKey?: string; // identifies a curated deck for seeding/reset
 }
 
 export interface Card {
@@ -42,6 +44,12 @@ class SyntankiDB extends Dexie {
     super("syntanki");
     this.version(1).stores({
       decks: "++id, name",
+      cards: "++id, deckId, [deckId+due]",
+      reviews: "++id, cardId, createdAt",
+      settings: "key",
+    });
+    this.version(2).stores({
+      decks: "++id, name, seedKey",
       cards: "++id, deckId, [deckId+due]",
       reviews: "++id, cardId, createdAt",
       settings: "key",

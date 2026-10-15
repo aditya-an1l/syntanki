@@ -4,8 +4,11 @@ interface DeckCardProps {
   total: number;
   due: number;
   tags?: string[];
+  isCurated?: boolean;
+  seedKey?: string;
   onReview: (id: number) => void;
   onDelete: (id: number) => void;
+  onReset?: (seedKey: string) => void;
 }
 
 export default function DeckCard({
@@ -14,8 +17,11 @@ export default function DeckCard({
   total,
   due,
   tags,
+  isCurated,
+  seedKey,
   onReview,
   onDelete,
+  onReset,
 }: DeckCardProps) {
   return (
     <div
@@ -39,9 +45,26 @@ export default function DeckCard({
             fontWeight: 600,
             color: "var(--ink)",
             marginBottom: 4,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
         >
           {name}
+          {isCurated && (
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 500,
+                padding: "2px 8px",
+                background: "var(--primary)",
+                color: "var(--ink)",
+                borderRadius: 9999,
+              }}
+            >
+              Starter
+            </span>
+          )}
         </div>
         <div style={{ fontSize: 14, color: "var(--mute)" }}>
           {total} cards {due > 0 && `· ${due} due`}
@@ -94,18 +117,33 @@ export default function DeckCard({
         >
           Review {due > 0 && `(${due})`}
         </button>
-        <button
-          onClick={() => onDelete(id)}
-          style={{
-            color: "var(--ash)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: 14,
-          }}
-        >
-          Delete
-        </button>
+        {isCurated && onReset && seedKey ? (
+          <button
+            onClick={() => onReset(seedKey)}
+            style={{
+              color: "var(--link-blue)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            Reset
+          </button>
+        ) : (
+          <button
+            onClick={() => onDelete(id)}
+            style={{
+              color: "var(--ash)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );

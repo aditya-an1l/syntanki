@@ -19,9 +19,16 @@ export async function getDeck(id: number): Promise<Deck | undefined> {
 }
 
 export async function deleteDeck(id: number): Promise<void> {
+  const deck = await db.decks.get(id);
+  if (deck?.protected) {
+    throw new Error("Curated decks cannot be deleted. Reset it instead.");
+  }
   await db.transaction("rw", db.decks, db.cards, db.reviews, async () => {
+    const cardIds = await db.cards.where("deckId").equals(id).primaryKeys();
+    if (cardIds.length > 0) {
+      await db.reviews.where("cardId").anyOf(cardIds).delete();
+    }
     await db.cards.where("deckId").equals(id).delete();
-    await db.reviews.where("cardId").between(0, Number.MAX_SAFE_INTEGER).delete();
     await db.decks.delete(id);
   });
 }
