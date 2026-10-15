@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createDeck, deleteDeck, addCardsBulk } from "@/db/helpers";
+import { resetCuratedDeck } from "@/db/seed";
 import { parseSnippet } from "@/parser/cloze";
 import { detectLanguage, languageDisplayName, type Language } from "@/parser/detect-language";
 import type { Deck } from "@/db/schema";
@@ -53,6 +54,17 @@ export default function DeckManager({ decks, onRefresh }: DeckManagerProps) {
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this deck and all its cards?")) return;
     await deleteDeck(id);
+    onRefresh();
+  };
+
+  const handleReset = async (seedKey: string) => {
+    if (
+      !confirm(
+        "Reset this curated deck to its original cards? Your progress on this deck will be cleared."
+      )
+    )
+      return;
+    await resetCuratedDeck(seedKey);
     onRefresh();
   };
 
@@ -329,9 +341,26 @@ export default function DeckManager({ decks, onRefresh }: DeckManagerProps) {
                       fontWeight: 600,
                       color: "var(--ink)",
                       marginBottom: 4,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
                     }}
                   >
                     {deck.name}
+                    {deck.protected && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 500,
+                          padding: "2px 6px",
+                          background: "var(--primary)",
+                          color: "var(--ink)",
+                          borderRadius: 9999,
+                        }}
+                      >
+                        Starter
+                      </span>
+                    )}
                   </div>
                   {deck.tags && deck.tags.length > 0 && (
                     <div style={{ display: "flex", gap: 4, marginBottom: 8, flexWrap: "wrap" }}>
@@ -353,38 +382,57 @@ export default function DeckManager({ decks, onRefresh }: DeckManagerProps) {
                     </div>
                   )}
                   <div style={{ display: "flex", gap: 4 }}>
-                    <button
-                      onClick={() => {
-                        setEditingId(deck.id!);
-                        setEditName(deck.name);
-                        setEditTags(deck.tags?.join(", ") || "");
-                      }}
-                      style={{
-                        padding: "4px 8px",
-                        background: "var(--surface-soft)",
-                        color: "var(--body)",
-                        border: "1px solid var(--hairline)",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        fontSize: 12,
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(deck.id!)}
-                      style={{
-                        padding: "4px 8px",
-                        background: "none",
-                        color: "var(--ash)",
-                        border: "1px solid var(--hairline)",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        fontSize: 12,
-                      }}
-                    >
-                      Delete
-                    </button>
+                    {deck.protected && deck.seedKey ? (
+                      <button
+                        onClick={() => handleReset(deck.seedKey!)}
+                        style={{
+                          padding: "4px 8px",
+                          background: "var(--surface-soft)",
+                          color: "var(--body)",
+                          border: "1px solid var(--hairline)",
+                          borderRadius: 4,
+                          cursor: "pointer",
+                          fontSize: 12,
+                        }}
+                      >
+                        Reset
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingId(deck.id!);
+                            setEditName(deck.name);
+                            setEditTags(deck.tags?.join(", ") || "");
+                          }}
+                          style={{
+                            padding: "4px 8px",
+                            background: "var(--surface-soft)",
+                            color: "var(--body)",
+                            border: "1px solid var(--hairline)",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontSize: 12,
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(deck.id!)}
+                          style={{
+                            padding: "4px 8px",
+                            background: "none",
+                            color: "var(--ash)",
+                            border: "1px solid var(--hairline)",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontSize: 12,
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               )}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getDecks, deleteDeck } from "@/db/helpers";
+import { seedCuratedDecks, resetCuratedDeck } from "@/db/seed";
 import { db } from "@/db/schema";
 import type { Deck } from "@/db/schema";
 import Hero from "@/components/Hero";
@@ -17,6 +18,7 @@ export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const load = async () => {
+    await seedCuratedDecks();
     const d = await getDecks();
     setDecks(d);
     const c: Record<number, { total: number; due: number }> = {};
@@ -38,6 +40,17 @@ export default function Home() {
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this deck and all its cards?")) return;
     await deleteDeck(id);
+    load();
+  };
+
+  const handleReset = async (seedKey: string) => {
+    if (
+      !confirm(
+        "Reset this curated deck to its original cards? Your progress on this deck will be cleared."
+      )
+    )
+      return;
+    await resetCuratedDeck(seedKey);
     load();
   };
 
@@ -111,8 +124,11 @@ export default function Home() {
               total={counts[d.id!]?.total ?? 0}
               due={counts[d.id!]?.due ?? 0}
               tags={d.tags}
+              isCurated={d.protected}
+              seedKey={d.seedKey}
               onReview={handleReview}
               onDelete={handleDelete}
+              onReset={handleReset}
             />
           ))}
         </div>
