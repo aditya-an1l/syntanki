@@ -26,7 +26,7 @@ export default function Hero({ children }: HeroProps) {
           marginBottom: 16,
         }}
       >
-        Anki for Code
+        Spaced repetition for coding interviews
       </p>
       <p
         style={{
@@ -37,8 +37,8 @@ export default function Hero({ children }: HeroProps) {
           maxWidth: 480,
         }}
       >
-        Paste code, generate flashcards, and master programming concepts with
-        spaced repetition. All offline, all local.
+        Paste code, get atomic recall cards. Review on a schedule that
+        adapts to you. Offline-first, no AI required.
       </p>
 
       <div
@@ -68,9 +68,9 @@ export default function Hero({ children }: HeroProps) {
             margin: 0,
           }}
         >
-          <li>Create a deck for a topic or repository</li>
-          <li>Paste your code, docs, or notes</li>
-          <li>Review with smart scheduling that adapts to you</li>
+          <li>Create a deck for a topic</li>
+          <li>Paste your code, get atomic cards</li>
+          <li>Review on a schedule that adapts to you</li>
         </ol>
       </div>
 
