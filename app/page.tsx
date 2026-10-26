@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getDecks, deleteDeck } from "@/db/helpers";
+import { getDecks, deleteDeck, exportDeck } from "@/db/helpers";
 import { seedCuratedDecks, resetCuratedDeck } from "@/db/seed";
 import { db } from "@/db/schema";
 import type { Deck } from "@/db/schema";
@@ -41,6 +41,19 @@ export default function Home() {
     if (!confirm("Delete this deck and all its cards?")) return;
     await deleteDeck(id);
     load();
+  };
+
+  const handleExport = async (id: number) => {
+    const json = await exportDeck(id);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `syntanki-deck-${id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleReset = async (seedKey: string) => {
@@ -128,6 +141,7 @@ export default function Home() {
               seedKey={d.seedKey}
               onReview={handleReview}
               onDelete={handleDelete}
+              onExport={handleExport}
               onReset={handleReset}
             />
           ))}
