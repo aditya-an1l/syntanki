@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createDeck, deleteDeck, addCardsBulk } from "@/db/helpers";
+import { createDeck, deleteDeck, addCardsBulk, importDeck } from "@/db/helpers";
 import { resetCuratedDeck } from "@/db/seed";
 import { parseSnippet } from "@/parser/cloze";
 import { detectLanguage, languageDisplayName, type Language } from "@/parser/detect-language";
@@ -24,6 +24,20 @@ export default function DeckManager({ decks, onRefresh }: DeckManagerProps) {
   const [detectedLang, setDetectedLang] = useState<Language>("text");
   const [importPreview, setImportPreview] = useState<{ front: string; back: string }[]>([]);
   const [importSaved, setImportSaved] = useState(false);
+  const [jsonImportSaved, setJsonImportSaved] = useState(false);
+  const [jsonImportError, setJsonImportError] = useState("");
+
+  const handleJsonImport = async (file: File) => {
+    setJsonImportError("");
+    const text = await file.text();
+    try {
+      await importDeck(text);
+      setJsonImportSaved(true);
+      onRefresh();
+    } catch (err) {
+      setJsonImportError(err instanceof Error ? err.message : "Import failed");
+    }
+  };
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -241,6 +255,43 @@ export default function DeckManager({ decks, onRefresh }: DeckManagerProps) {
               <span style={{ marginLeft: 8, fontSize: 13, color: "var(--mute)" }}>Saved.</span>
             )}
           </>
+        )}
+      </div>
+
+      <hr style={{ border: "none", borderTop: "1px solid var(--hairline)", margin: "24px 0" }} />
+
+      <div style={{ marginBottom: 24 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)", marginBottom: 8 }}>
+          Restore from JSON
+        </h3>
+        <p style={{ fontSize: 12, color: "var(--mute)", marginBottom: 8 }}>
+          Upload a previously exported deck backup to restore it.
+        </p>
+        <input
+          type="file"
+          accept=".json"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              e.target.value = "";
+              handleJsonImport(file);
+            }
+          }}
+          style={{
+            width: "100%",
+            padding: 8,
+            borderRadius: 6,
+            border: "1px solid var(--hairline)",
+            background: "var(--surface-card)",
+            color: "var(--ink)",
+            fontSize: 13,
+          }}
+        />
+        {jsonImportError && (
+          <p style={{ fontSize: 12, color: "var(--ash)", marginTop: 8 }}>{jsonImportError}</p>
+        )}
+        {jsonImportSaved && (
+          <p style={{ fontSize: 12, color: "var(--mute)", marginTop: 8 }}>Restored.</p>
         )}
       </div>
 

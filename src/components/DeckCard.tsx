@@ -8,6 +8,7 @@ interface DeckCardProps {
   seedKey?: string;
   onReview: (id: number) => void;
   onDelete: (id: number) => void;
+  onExport: (id: number) => void;
   onReset?: (seedKey: string) => void;
 }
 
@@ -21,6 +22,7 @@ export default function DeckCard({
   seedKey,
   onReview,
   onDelete,
+  onExport,
   onReset,
 }: DeckCardProps) {
   return (
@@ -101,6 +103,18 @@ export default function DeckCard({
         >
           Import
         </a>
+        <button
+          onClick={() => onExport(id)}
+          style={{
+            color: "var(--link-blue)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 14,
+          }}
+        >
+          Export
+        </button>
         <button
           onClick={() => onReview(id)}
           disabled={due === 0}
