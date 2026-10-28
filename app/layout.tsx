@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Banner from "@/components/Banner";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -24,8 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Banner />
-        {children}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -40,6 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
+        <Banner />
+        <AnalyticsTracker />
+        {children}
         <script
           dangerouslySetInnerHTML={{
             __html: `
