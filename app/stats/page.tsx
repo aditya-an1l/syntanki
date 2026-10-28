@@ -50,7 +50,7 @@ function RetentionChart({ cards }: { cards: { due: number; stability: number; di
               y={y}
               width={16}
               height={barHeight}
-              fill={count > 0 ? "#f7a501" : "#333"}
+              fill={count > 0 ? "var(--primary)" : "var(--surface-soft)"}
               opacity={count > 0 ? 0.8 : 0.3}
             />
           );
@@ -142,15 +142,15 @@ export default function StatsPage() {
       <div style={{ display: "flex", gap: 24, marginBottom: 24 }}>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 32, fontWeight: "bold" }}>{totalCards}</div>
-          <div style={{ color: "#888" }}>Total Cards</div>
+          <div style={{ color: "var(--mute)" }}>Total Cards</div>
         </div>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 32, fontWeight: "bold", color: "#d97706" }}>{totalDue}</div>
-          <div style={{ color: "#888" }}>Due Now</div>
+          <div style={{ fontSize: 32, fontWeight: "bold", color: "var(--primary)" }}>{totalDue}</div>
+          <div style={{ color: "var(--mute)" }}>Due Now</div>
         </div>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 32, fontWeight: "bold", color: "#16a34a" }}>{totalReviewed}</div>
-          <div style={{ color: "#888" }}>Reviewed</div>
+          <div style={{ fontSize: 32, fontWeight: "bold", color: "var(--success)" }}>{totalReviewed}</div>
+          <div style={{ color: "var(--mute)" }}>Reviewed</div>
         </div>
       </div>
 
@@ -162,14 +162,15 @@ export default function StatsPage() {
             <div
               key={s.deck.id}
               style={{
-                border: "1px solid #333",
+                border: "1px solid var(--hairline)",
                 borderRadius: 8,
                 padding: 16,
                 marginBottom: 8,
+                background: "var(--surface-card)",
               }}
             >
               <strong>{s.deck.name}</strong>
-              <div style={{ marginTop: 8, display: "flex", gap: 16, color: "#888" }}>
+              <div style={{ marginTop: 8, display: "flex", gap: 16, color: "var(--mute)" }}>
                 <span>{s.total} cards</span>
                 <span>{s.due} due</span>
                 <span>{s.reviewed} reviewed</span>
@@ -179,7 +180,7 @@ export default function StatsPage() {
                 style={{
                   marginTop: 8,
                   height: 4,
-                  background: "#333",
+                  background: "var(--surface-soft)",
                   borderRadius: 2,
                   overflow: "hidden",
                 }}
@@ -188,7 +189,7 @@ export default function StatsPage() {
                   style={{
                     height: "100%",
                     width: `${s.total > 0 ? ((s.total - s.due) / s.total) * 100 : 0}%`,
-                    background: "#16a34a",
+                    background: "var(--success)",
                   }}
                 />
               </div>
@@ -198,7 +199,7 @@ export default function StatsPage() {
       )}
 
       <p style={{ marginTop: 16 }}>
-        <a href="/" style={{ color: "#f7a501", textDecoration: "none" }}>Back to decks</a>
+        <a href="/" style={{ color: "var(--link-blue)", textDecoration: "none" }}>Back to decks</a>
       </p>
 
       <RetentionChart cards={allCards} />

@@ -43,10 +43,16 @@ function ReviewInner() {
   useEffect(() => {
     if (!current) return;
     const lang = current.language || "text";
-    codeToHtml(current.front, { lang, theme: "vitesse-dark" })
+    const root = document.documentElement;
+    const explicit = root.getAttribute("data-theme");
+    const isDark =
+      explicit === "dark" ||
+      (!explicit && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const theme = isDark ? "vitesse-dark" : "vitesse-light";
+    codeToHtml(current.front, { lang, theme })
       .then(setHighlightedFront)
       .catch(() => setHighlightedFront(`<pre>${current.front}</pre>`));
-    codeToHtml(current.back, { lang, theme: "vitesse-dark" })
+    codeToHtml(current.back, { lang, theme })
       .then(setHighlightedBack)
       .catch(() => setHighlightedBack(`<pre>${current.back}</pre>`));
   }, [current]);

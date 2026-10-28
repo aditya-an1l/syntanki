@@ -90,7 +90,7 @@ export default function Home() {
   return (
     <main style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
       <Hero>
-        <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           <button
             onClick={() => setDrawerOpen(true)}
             style={{

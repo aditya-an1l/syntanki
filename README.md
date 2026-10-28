@@ -4,6 +4,7 @@
 <div align="center">
   <h1>Syntanki</h1>
   <p>Spaced repetition for coding interviews. Paste code, get atomic recall cards. Offline-first, no AI.</p>
+  <p><a href="https://syntanki.vercel.app"><strong>Live demo</strong></a></p>
 </div>
 
 <div align="center">
@@ -21,7 +22,7 @@
       <img alt="Issues" src="https://img.shields.io/github/issues/aditya-an1l/syntanki?style=for-the-badge&logo=gitbook&color=FF4136&logoColor=FFFFFF&labelColor=000000" />
     </a>
     <a href="https://github.com/aditya-an1l/syntanki/actions/workflows/ci.yml">
-      <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/aditya-an1l/syntanki/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=FFFFFF&labelColor=000000&color=1DA1F2" />
+      <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/aditya-an1l/syntanki/ci.yml?branch=master&style=for-the-badge&logo=githubactions&logoColor=FFFFFF&labelColor=000000&color=1DA1F2" />
     </a>
     <a href="https://github.com/aditya-an1l/syntanki">
       <img alt="Repo Size" src="https://img.shields.io/github/repo-size/aditya-an1l/syntanki?color=1DA1F2&label=SIZE&logo=files&style=for-the-badge&logoColor=FFFFFF&labelColor=000000" />
@@ -34,17 +35,51 @@
 
 ## Overview
 
-Syntanki is an Anki-for-code PWA. Paste code (or import from a public GitHub repo) and it deterministically generates atomic cloze-code cards scheduled with FSRS, reviewed offline-first in the browser (IndexedDB). It acts as a spaced-repetition system for coding interviews — DSA, LeetCode, and language fundamentals — with zero AI required by default.
+<div align="center">
+  <img src="./media/screenshots/home-light.png" width="820" alt="Syntanki home screen with curated starter decks">
+</div>
+
+Syntanki is an Anki-for-code PWA. Paste code (or import from a public GitHub repo) and it deterministically generates atomic cloze-code cards scheduled with FSRS, reviewed offline-first in the browser (IndexedDB). It acts as a spaced-repetition system for coding interviews - DSA, LeetCode, and language fundamentals - with zero AI required by default.
+
+## Screenshots
+
+<div align="center">
+  <img src="./media/screenshots/review.png" width="820" alt="Reviewing a cloze code card with FSRS grading">
+  <p><em>Review: cloze-code cards graded Again / Hard / Good / Easy</em></p>
+</div>
+
+<div align="center">
+  <img src="./media/screenshots/import.png" width="820" alt="Pasting Python code to generate atomic cards">
+  <p><em>Import: paste code, language auto-detected, atomic cards generated</em></p>
+</div>
+
+<div align="center">
+  <img src="./media/screenshots/stats.png" width="820" alt="Stats and the 30-day retention curve">
+  <p><em>Stats: retention, due counts, and a 30-day FSRS retention curve</em></p>
+</div>
+
+<table>
+  <tr>
+    <td align="center" valign="top">
+      <img src="./media/screenshots/home-dark.png" width="420" alt="Syntanki dark theme"><br>
+      <em>Dark theme</em>
+    </td>
+    <td align="center" valign="top">
+      <img src="./media/screenshots/home-mobile.png" width="190" alt="Syntanki on mobile"><br>
+      <em>Mobile PWA</em>
+    </td>
+  </tr>
+</table>
 
 ## Features
 
-- **Deterministic cloze parser** — Regex/heuristic tokenizer turns code snippets into atomic cloze cards without AI. Supports Python, JS/TS, Java, C++, Rust, Go, Ruby, CSS, SQL, Bash, and HTML with auto-detection.
-- **FSRS scheduling** — Uses the ts-fsrs library for research-backed stability/difficulty scheduling. One fact per card, 10-second rule enforced.
-- **Offline-first PWA** — Service worker precaches routes; all decks, cards, and reviews live in IndexedDB. Works on iOS Add-to-Home-Screen with no network after install.
-- **Shiki syntax highlighting** — Code on cards is syntax-highlighted at runtime.
-- **JSON export / import** — Versioned deck backups preserving FSRS state and review history. Doubles as manual cross-device sync (opt-in, Last-Write-Wins by client timestamp).
-- **GitHub import** — Paste a public repo URL; README code blocks become cards.
-- **Newbie onboarding** — Guided 3-step flow: welcome → first deck → first review.
+- **Deterministic cloze parser** - Regex/heuristic tokenizer turns code snippets into atomic cloze cards without AI. Supports Python, JS/TS, Java, C++, Rust, Go, Ruby, CSS, SQL, Bash, and HTML with auto-detection.
+- **FSRS scheduling** - Uses the ts-fsrs library for research-backed stability/difficulty scheduling. One fact per card, 10-second rule enforced.
+- **Offline-first PWA** - Service worker precaches routes; all decks, cards, and reviews live in IndexedDB. Works on iOS Add-to-Home-Screen with no network after install.
+- **Shiki syntax highlighting** - Code on cards is syntax-highlighted at runtime.
+- **JSON export / import** - Versioned deck backups preserving FSRS state and review history. Doubles as manual cross-device sync (opt-in, Last-Write-Wins by client timestamp).
+- **GitHub import** - Paste a public repo URL; README code blocks become cards.
+- **Newbie onboarding** - Guided 3-step flow: welcome → first deck → first review.
 
 ## Installation
 
@@ -65,11 +100,11 @@ npm run build
 
 ## Usage
 
-1. **Create a deck** — Click "Create/Import" on the home page, or let curated starter decks seed on first load.
-2. **Import code** — Paste a snippet on the Import page; cards are generated and language is auto-detected. Or import from a public GitHub repo URL.
-3. **Review** — Click "Review" on a deck. Grade each card (Again / Hard / Good / Easy). FSRS reschedules it based on your performance.
-4. **Track progress** — View stats: retention %, due counts, and a 30-day retention curve.
-5. **Back up** — Export any deck to JSON; import it on another device to sync manually.
+1. **Create a deck** - Click "Create/Import" on the home page, or let curated starter decks seed on first load.
+2. **Import code** - Paste a snippet on the Import page; cards are generated and language is auto-detected. Or import from a public GitHub repo URL.
+3. **Review** - Click "Review" on a deck. Grade each card (Again / Hard / Good / Easy). FSRS reschedules it based on your performance.
+4. **Track progress** - View stats: retention %, due counts, and a 30-day retention curve.
+5. **Back up** - Export any deck to JSON; import it on another device to sync manually.
 
 ## Running Tests
 
@@ -80,6 +115,6 @@ npm test
 
 ## Notes
 
-- **No AI by default** — Card generation is deterministic. AI instructor features are optional and off by default; BYOK keys live in browser localStorage only.
-- **No backend** — All data stays local in IndexedDB. No server, no auth, no cloud sync in V1.
-- **Offline-first** — Review queue, decks, and stats work with no network after first install.
+- **No AI by default** - Card generation is deterministic. AI instructor features are optional and off by default; BYOK keys live in browser localStorage only.
+- **No backend** - All data stays local in IndexedDB. No server, no auth, no cloud sync in V1.
+- **Offline-first** - Review queue, decks, and stats work with no network after first install.

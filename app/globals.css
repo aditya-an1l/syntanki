@@ -29,6 +29,7 @@ button, input, select, textarea { font: inherit; }
   --hairline-soft: #dcdfd2;
   --link-blue: #1d4ed8;
   --focus-ring: rgba(59,130,246,0.5);
+  --success: #16a34a;
 
   /* Typography */
   --font-sans: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
@@ -72,6 +73,7 @@ button, input, select, textarea { font: inherit; }
   --hairline-soft: #2d2f33;
   --link-blue: #60a5fa;
   --focus-ring: rgba(96,165,250,0.5);
+  --success: #4ade80;
 }
 
 /* ── OS Preference (system) ─────────────────────────────────────────── */
@@ -90,6 +92,7 @@ button, input, select, textarea { font: inherit; }
     --hairline-soft: #2d2f33;
     --link-blue: #60a5fa;
     --focus-ring: rgba(96,165,250,0.5);
+    --success: #4ade80;
   }
 }
 
