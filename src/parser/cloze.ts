@@ -173,6 +173,31 @@ function extractKeywords(code: string, language: string): RawCard[] {
           source: code,
         });
       }
+      if (/\bclass\s+\w+/.test(trimmed)) {
+        const name = trimmed.match(/class\s+(\w+)/)?.[1];
+        cards.push({
+          front: `What keyword defines a class in Python?`,
+          back: `class`,
+          language,
+          source: code,
+        });
+        if (name) {
+          cards.push({
+            front: `What is the name of this class?\n\n\`\`\`python\n${trimmed}\n\`\`\``,
+            back: name,
+            language,
+            source: code,
+          });
+        }
+      }
+      if (/\belif\b/.test(trimmed)) {
+        cards.push({
+          front: `What keyword is used for else-if conditions in Python?`,
+          back: `elif`,
+          language,
+          source: code,
+        });
+      }
     }
 
     // JavaScript/TypeScript: function, const, let, import, export, console.log, async, await
@@ -602,6 +627,74 @@ function extractKeywords(code: string, language: string): RawCard[] {
         cards.push({
           front: `What keyword starts a for loop in bash?`,
           back: `for`,
+          language,
+          source: code,
+        });
+      }
+    }
+
+    // C++: class, virtual, template, #include, cout, namespace, new, delete
+    if (language === "cpp") {
+      if (/\bclass\s+\w+/.test(trimmed)) {
+        cards.push({
+          front: `What keyword defines a class in C++?`,
+          back: `class`,
+          language,
+          source: code,
+        });
+      }
+      if (/\bvirtual\b/.test(trimmed)) {
+        cards.push({
+          front: `What keyword declares a virtual function in C++?`,
+          back: `virtual`,
+          language,
+          source: code,
+        });
+      }
+      if (/\btemplate\s*</.test(trimmed)) {
+        cards.push({
+          front: `What keyword starts a template declaration in C++?`,
+          back: `template`,
+          language,
+          source: code,
+        });
+      }
+      if (/^#include/.test(trimmed)) {
+        cards.push({
+          front: `What directive includes a header in C++?`,
+          back: `#include`,
+          language,
+          source: code,
+        });
+      }
+      if (/\bstd::cout/.test(trimmed)) {
+        cards.push({
+          front: `What object prints to stdout in C++?`,
+          back: `std::cout`,
+          language,
+          source: code,
+        });
+      }
+      if (/\bnamespace\s+\w+/.test(trimmed)) {
+        cards.push({
+          front: `What keyword defines a namespace in C++?`,
+          back: `namespace`,
+          language,
+          source: code,
+        });
+      }
+      if (/\bnew\s+\w+/.test(trimmed)) {
+        cards.push({
+          front: `What keyword allocates memory in C++?`,
+          back: `new`,
+          language,
+          source: code,
+        });
+      }
+      if (/\bdelete\s+\w+/.test(trimmed)) {
+        cards.push({
+          front: `What keyword deallocates memory in C++?`,
+          back: `delete`,
           language,
           source: code,
         });

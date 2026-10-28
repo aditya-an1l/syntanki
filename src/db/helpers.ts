@@ -93,6 +93,46 @@ export async function recordReview(cardId: number, grade: 1 | 2 | 3 | 4): Promis
   });
 }
 
+export async function getSetting(key: string): Promise<string | undefined> {
+  const setting = await db.settings.get(key);
+  return setting?.value;
+}
+
+export async function setSetting(key: string, value: string): Promise<void> {
+  await db.settings.put({ key, value });
+}
+
+export async function recordActivation(): Promise<void> {
+  const existing = await db.settings.get("activation_at");
+  if (!existing) {
+    await db.settings.put({ key: "activation_at", value: String(Date.now()) });
+  }
+}
+
+export async function recordD7Visit(): Promise<void> {
+  const activation = await db.settings.get("activation_at");
+  if (!activation) return;
+  const activatedAt = Number(activation.value);
+  const d7 = activatedAt + 7 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  if (now >= d7) {
+    const existing = await db.settings.get("d7_visited");
+    if (!existing) {
+      await db.settings.put({ key: "d7_visited", value: "true" });
+    }
+  }
+}
+
+export async function getActivationStats(): Promise<{ activated: boolean; d7Returned: boolean; activatedAt?: number }> {
+  const activation = await db.settings.get("activation_at");
+  const d7 = await db.settings.get("d7_visited");
+  return {
+    activated: !!activation,
+    d7Returned: !!d7,
+    activatedAt: activation ? Number(activation.value) : undefined,
+  };
+}
+
 export interface DeckExport {
   version: number;
   exportedAt: number;

@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { codeToHtml } from "shiki";
-import { getDueCards, updateCardFsrs, recordReview, getDeck } from "@/db/helpers";
+import { getDueCards, updateCardFsrs, recordReview, getDeck, recordActivation } from "@/db/helpers";
 import { nextFSRSState, formatDue, type Grade } from "@/scheduler/fsrs";
 import type { Card } from "@/db/schema";
 
@@ -56,6 +56,9 @@ function ReviewInner() {
     const newFsrs = nextFSRSState(current.fsrs, grade);
     await updateCardFsrs(current.id!, newFsrs);
     await recordReview(current.id!, grade);
+    if (grade >= 1) {
+      await recordActivation();
+    }
 
     const remaining = queue.slice(1);
     setQueue(remaining);

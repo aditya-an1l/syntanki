@@ -208,7 +208,9 @@ function ImportInner() {
       {saved && <p style={{ color: "var(--mute)", marginTop: 8 }}>Cards saved.</p>}
 
       <p style={{ marginTop: 16 }}>
-        <a href="/">Back to decks</a>
+        <a href="/" style={{ color: "var(--link-blue)", textDecoration: "none" }}>Back to decks</a>
+        &nbsp;|&nbsp;
+        <a href="/import-link" style={{ color: "var(--link-blue)", textDecoration: "none" }}>Import from Link</a>
       </p>
     </main>
   );

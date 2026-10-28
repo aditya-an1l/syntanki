@@ -150,6 +150,18 @@ export default function SettingsPage() {
         Save
       </button>
       {saved && <span style={{ marginLeft: 12, color: "var(--mute)" }}>Saved.</span>}
+      <section style={{ marginBottom: 24 }}>
+        <h2 style={{ color: "var(--ink)", marginBottom: 8 }}>Cross-Device Sync</h2>
+        <p style={{ color: "var(--mute)", marginBottom: 12 }}>
+          Sync is manual and opt-in: export a deck JSON from one device, import it
+          on another. Works offline, no server, no account. When both devices have
+          the same deck, the newer export wins (Last-Write-Wins by client time).
+        </p>
+        <p style={{ color: "var(--mute)", fontSize: 12, marginBottom: 12 }}>
+          Use the Export button on any deck card, then Restore from JSON in the
+          deck drawer on your other device.
+        </p>
+      </section>
 
       <p style={{ marginTop: 24 }}>
         <a href="/">Back to decks</a>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getDecks, deleteDeck, exportDeck } from "@/db/helpers";
+import { getDecks, deleteDeck, exportDeck, getSetting, setSetting } from "@/db/helpers";
 import { seedCuratedDecks, resetCuratedDeck } from "@/db/seed";
 import { db } from "@/db/schema";
 import type { Deck } from "@/db/schema";
@@ -10,17 +10,21 @@ import Hero from "@/components/Hero";
 import DeckCard from "@/components/DeckCard";
 import Drawer from "@/components/Drawer";
 import DeckManager from "@/components/DeckManager";
+import Onboarding from "@/components/Onboarding";
 
 export default function Home() {
   const router = useRouter();
   const [decks, setDecks] = useState<Deck[]>([]);
   const [counts, setCounts] = useState<Record<number, { total: number; due: number }>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
   const load = async () => {
     await seedCuratedDecks();
     const d = await getDecks();
     setDecks(d);
+    const onboardedVal = await getSetting("onboarded");
+    setOnboarded(onboardedVal === "true");
     const c: Record<number, { total: number; due: number }> = {};
     const now = Date.now();
     for (const deck of d) {
@@ -71,6 +75,18 @@ export default function Home() {
     router.push(`/review?deck=${id}`);
   };
 
+  if (onboarded === null) {
+    return (
+      <main style={{ padding: 24, maxWidth: 720, margin: "0 auto" }}>
+        <p style={{ color: "var(--mute)" }}>Loading...</p>
+      </main>
+    );
+  }
+
+  if (!onboarded) {
+    return <Onboarding onComplete={() => setOnboarded(true)} />;
+  }
+
   return (
     <main style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
       <Hero>
@@ -104,6 +120,21 @@ export default function Home() {
             }}
           >
             Stats
+          </a>
+          <a
+            href="/github-import"
+            style={{
+              padding: "8px 16px",
+              background: "var(--surface-soft)",
+              color: "var(--ink)",
+              border: "1px solid var(--hairline)",
+              borderRadius: 6,
+              textDecoration: "none",
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
+            GitHub Import
           </a>
           <a
             href="/settings"
